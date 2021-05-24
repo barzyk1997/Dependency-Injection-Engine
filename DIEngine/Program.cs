@@ -43,6 +43,10 @@ namespace DIEngine
             {
                 returningType = _mappings[returningType];
             }
+            if (returningType.IsAbstract || returningType.IsInterface)
+            {
+                throw new Exception("Nie zarejestrowano typu konkretnego dla typu: " + returningType.ToString());
+            }
             return (T)Activator.CreateInstance(returningType);
         }
     }
