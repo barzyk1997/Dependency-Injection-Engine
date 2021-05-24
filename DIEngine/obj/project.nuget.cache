@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2MdhN5MaDE1axzB9Aw5jbdm81vDCS5AMcH/sf3qGNMDI1YUJ2QFo5FaSoNmih/iNog1l3cElvzl9gZmPDOMfNQ==",
+  "dgSpecHash": "11SbZr+06Ic5a9oXnTJJrZa6y1vVIhzib29kjB3qu0zO4DPBHDXB+8D5bLE1nkwcF/twre5Jcsf2gLSzat7Ttg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\DIEngine\\DIEngine.csproj",
+  "projectFilePath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

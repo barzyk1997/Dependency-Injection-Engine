@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\DIEngine\\DIEngine.csproj",
+      "projectUniqueName": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
       "projectName": "DIEngine",
-      "projectPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\DIEngine\\DIEngine.csproj",
+      "projectPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
       "packagesPath": "C:\\Users\\dawidos\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\DIEngine\\obj\\",
+      "outputPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

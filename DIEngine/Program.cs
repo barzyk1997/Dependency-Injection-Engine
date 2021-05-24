@@ -17,49 +17,33 @@ namespace DIEngine
         private static Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
         public void RegisterType<T>(bool Singleton) where T : class, new()
         {
-            if(_singletons.ContainsKey(typeof(T)))
+            if (Singleton)
             {
-                throw new Exception($"Singleton of type {typeof(T).Name} is already registered.");
-            }
-            else if (Singleton)
-            {
-                _singletons.Add(typeof(T), new T());
-            }
-            else
-            {
-                _singletons.Add(typeof(T), null);
+                _singletons.Add(typeof(T), Activator.CreateInstance(typeof(T)));
             }
         }
 
-        public void RegisterType<From, To>(bool Singleton) where To : From, new()
+        public void RegisterType<From, To>(bool Singleton) where To : From
         {
             _mappings.Add(typeof(From), typeof(To));
             if (Singleton)
             {
-                _singletons.Add(typeof(To), new To());
-            }
-            else
-            {
-                _singletons.Add(typeof(To), null);
+                _singletons.Add(typeof(From), Activator.CreateInstance(typeof(To)));
             }
         }
 
-        public T Resolve<T>() where T : new()
+        public T Resolve<T>()
         {
             Type returningType = typeof(T);
-            if(_mappings.ContainsKey(returningType))
+            if(_singletons.ContainsKey(returningType))
+            {
+                return (T)_singletons[returningType];
+            }
+            if (_mappings.ContainsKey(returningType))
             {
                 returningType = _mappings[returningType];
             }
-            if(_singletons.ContainsKey(returningType))
-            {
-                if (_singletons[returningType] == null)
-                {
-                    return new T();
-                }
-                return (T)_singletons[returningType];
-            }
-            throw new Exception($"Type {typeof(T).Name} is not registered.");
+            return (T)Activator.CreateInstance(returningType);
         }
     }
 }
