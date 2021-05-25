@@ -1,16 +1,3 @@
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.exe
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.deps.json
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.runtimeconfig.json
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.runtimeconfig.dev.json
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.dll
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\DIEngine.pdb
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.csprojAssemblyReference.cache
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.AssemblyInfoInputs.cache
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.AssemblyInfo.cs
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.csproj.CoreCompileInputs.cache
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.dll
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.pdb
-C:\Users\dawidos\source\repos\DIEngine\Dependency-Injection-Engine\DIEngine\obj\Debug\netcoreapp3.1\DIEngine.genruntimeconfig.cache
 D:\poo2021\lista9\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
 D:\poo2021\lista9\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
 D:\poo2021\lista9\Dependency-Injection-Engine\DIEngine\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
