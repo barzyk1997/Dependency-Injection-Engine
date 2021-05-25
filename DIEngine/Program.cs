@@ -3,32 +3,34 @@ using System.Collections.Generic;
 
 namespace DIEngine
 {
-    class Program
+    public class MissingTypeException : Exception
     {
-        static void Main(string[] args)
+        public Type missingType;
+
+        public MissingTypeException(Type missingType, string message) : base(message)
         {
-            Console.WriteLine("Hello World!");
+            this.missingType = missingType;
         }
     }
-
+    
     public class SimpleContainer
     {
-        private static Dictionary<Type, Type> _mappings = new Dictionary<Type, Type>();
-        private static Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
+        private Dictionary<Type, Type> _mappings = new Dictionary<Type, Type>();
+        private Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
         public void RegisterType<T>(bool Singleton) where T : class, new()
         {
             if (Singleton)
             {
-                _singletons.Add(typeof(T), Activator.CreateInstance(typeof(T)));
+                _singletons[typeof(T)] = Activator.CreateInstance(typeof(T));
             }
         }
 
         public void RegisterType<From, To>(bool Singleton) where To : From
         {
-            _mappings.Add(typeof(From), typeof(To));
+            _mappings[typeof(From)] = typeof(To);
             if (Singleton)
             {
-                _singletons.Add(typeof(From), Activator.CreateInstance(typeof(To)));
+                _singletons[typeof(From)] = Activator.CreateInstance(typeof(To));
             }
         }
 
@@ -45,7 +47,7 @@ namespace DIEngine
             }
             if (returningType.IsAbstract || returningType.IsInterface)
             {
-                throw new Exception("Nie zarejestrowano typu konkretnego dla typu: " + returningType.ToString());
+                throw new MissingTypeException(returningType, "Nie zarejestrowano typu konkretnego dla typu: " + returningType.ToString());
             }
             return (T)Activator.CreateInstance(returningType);
         }

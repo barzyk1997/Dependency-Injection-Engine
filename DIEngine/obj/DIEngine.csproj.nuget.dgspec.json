@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj": {}
+    "D:\\poo2021\\lista9\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj": {
+    "D:\\poo2021\\lista9\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
+        "projectUniqueName": "D:\\poo2021\\lista9\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
         "projectName": "DIEngine",
-        "projectPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
-        "packagesPath": "C:\\Users\\dawidos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dawidos\\source\\repos\\DIEngine\\Dependency-Injection-Engine\\DIEngine\\obj\\",
+        "projectPath": "D:\\poo2021\\lista9\\Dependency-Injection-Engine\\DIEngine\\DIEngine.csproj",
+        "packagesPath": "C:\\Users\\grzegorz.ciesielski\\.nuget\\packages\\",
+        "outputPath": "D:\\poo2021\\lista9\\Dependency-Injection-Engine\\DIEngine\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\dawidos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\grzegorz.ciesielski\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -43,6 +43,24 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "MSTest.TestAdapter": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.5.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -58,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }
