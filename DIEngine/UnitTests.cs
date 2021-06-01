@@ -91,6 +91,7 @@ namespace DIEngine
         public string string1 { get; set; }
         public StringBar stringBar { get; set; }
 
+        [DependencyConstructor]
         public MultiStringBar1(string a)
         {
             string1 = a;
@@ -326,7 +327,7 @@ namespace DIEngine
             Assert.IsNotNull(bar.str);
             Assert.AreEqual(bar.str, slowo);
             Assert.IsNotNull(bar.stringBar);
-            Assert.AreEqual(bar.stringBar, slowo);
+            Assert.AreEqual(bar.stringBar.str, slowo);
         }
         [TestMethod]
         public void BothStrings()
@@ -343,7 +344,25 @@ namespace DIEngine
             Assert.IsNotNull(bar.str);
             Assert.AreEqual(bar.str, slowo);
             Assert.IsNotNull(bar.stringBar);
-            Assert.AreEqual(bar.stringBar, slowo2);
+            Assert.AreEqual(bar.stringBar.str, slowo2);
+        }
+
+        [TestMethod]
+        public void DependencyConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            string slowo = "test";
+            string slowo2 = "test1";
+            StringBar strBar = new StringBar(slowo2);
+            container.RegisterInstance(slowo);
+            container.RegisterInstance(strBar);
+            container.RegisterType<MultiStringBar>(false);
+            MultiStringBar bar = container.Resolve<MultiStringBar>();
+            Assert.IsNotNull(bar);
+            Assert.IsNotNull(bar.str);
+            Assert.AreEqual(bar.str, slowo);
+            Assert.IsNotNull(bar.stringBar);
+            Assert.AreEqual(bar.stringBar.str, slowo);
         }
 
         [TestMethod]
