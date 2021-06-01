@@ -63,7 +63,7 @@ namespace DIEngine
     {
         private Dictionary<Type, Mapping> _mappings = new Dictionary<Type, Mapping>();
 
-        public void RegisterType<T>(bool Singleton) where T : class, new()
+        public void RegisterType<T>(bool Singleton) where T : class
         {
             if (Singleton)
             {

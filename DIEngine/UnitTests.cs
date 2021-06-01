@@ -33,6 +33,93 @@ namespace DIEngine
 
     }
 
+    public class ConstructorBar
+    {
+        public Bar bar { get; set; }
+        public ConstructorBar(Bar bar)
+        {
+            this.bar = bar;
+        }
+    }
+
+    public class StringBar
+    {
+        public string str { get; set; }
+        public StringBar(string a)
+        {
+            str = a;
+        }
+    }
+
+
+    public class MultiStringBar
+    {
+        public string str { get; set; }
+        public StringBar stringBar { get; set; }
+        public MultiStringBar(string a)
+        {
+            str = a;
+            stringBar = new StringBar(a);
+        }
+        public MultiStringBar(string a, StringBar b)
+        {
+            str = a;
+            stringBar = b;
+        }
+    }
+
+    public class MultiBarBar
+    {
+        public Bar bar { get; set; }
+        public Foo foo { get; set; }
+
+        public MultiBarBar() { }
+        public MultiBarBar(Bar bar)
+        {
+            this.bar = bar;
+        }
+
+        public MultiBarBar(Bar bar, Foo foo)
+        {
+            this.bar = bar;
+            this.foo = foo;
+        }
+
+    }
+    public class MultiStringBar1
+    {
+        public string string1 { get; set; }
+        public StringBar stringBar { get; set; }
+
+        public MultiStringBar1(string a)
+        {
+            string1 = a;
+            stringBar = new StringBar(a);
+        }
+        public MultiStringBar1(string a, StringBar b)
+        {
+            string1 = a;
+            stringBar = b;
+        }
+    }
+
+    public class ChainBar
+    {
+        public ConstructorBar bar {get; set;}
+
+        public ChainBar()
+    }
+
+    public class A
+    {
+        public A a;
+        public A(A a)
+        {
+            this.a = a;
+        }
+    }
+
+
 
     [TestClass]
     public class UnitTests
@@ -178,6 +265,93 @@ namespace DIEngine
             Assert.IsInstanceOfType(foo2, typeof(Foo));
 
             Assert.AreEqual(foo1, foo2);
+        }
+
+        [TestMethod]
+        public void NonEmptyConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            container.RegisterType<ConstructorBar>(false);
+            ConstructorBar bar = container.Resolve<ConstructorBar>();
+            Assert.IsNotNull(bar);
+            Assert.IsNotNull(bar.bar);
+        }
+
+        [TestMethod]
+        public void UnregisteredStringConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            container.RegisterType<StringBar>(false);
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                StringBar foo = container.Resolve<StringBar>();
+            });
+        }
+
+        [TestMethod]
+        public void RegisteredStringConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            string slowo = "test";
+            container.RegisterInstance(slowo);
+            container.RegisterType<StringBar>(false);
+            StringBar foo = container.Resolve<StringBar>();
+            Assert.IsNotNull(foo);
+            Assert.AreEqual(slowo, foo.str);
+        }
+
+        [TestMethod]
+        public void MultiArgsConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            container.RegisterType<MultiBarBar>(false);
+            MultiBarBar foo = container.Resolve<MultiBarBar>();
+            Assert.IsNotNull(foo);
+            Assert.IsNotNull(foo.foo);
+            Assert.IsNotNull(foo.bar);
+        }
+
+        [TestMethod]
+        public void OnlyOneString()
+        {
+            SimpleContainer container = new SimpleContainer();
+            string slowo = "test";
+            container.RegisterInstance(slowo);
+            container.RegisterType<MultiStringBar>(false);
+            MultiStringBar bar = container.Resolve<MultiStringBar>();
+            Assert.IsNotNull(bar);
+            Assert.IsNotNull(bar.str);
+            Assert.AreEqual(bar.str, slowo);
+            Assert.IsNotNull(bar.stringBar);
+            Assert.AreEqual(bar.stringBar, slowo);
+        }
+        [TestMethod]
+        public void BothStrings()
+        {
+            SimpleContainer container = new SimpleContainer();
+            string slowo = "test";
+            string slowo2 = "test1";
+            StringBar strBar = new StringBar(slowo2);
+            container.RegisterInstance(slowo);
+            container.RegisterInstance(strBar);
+            container.RegisterType<MultiStringBar>(false);
+            MultiStringBar bar = container.Resolve<MultiStringBar>();
+            Assert.IsNotNull(bar);
+            Assert.IsNotNull(bar.str);
+            Assert.AreEqual(bar.str, slowo);
+            Assert.IsNotNull(bar.stringBar);
+            Assert.AreEqual(bar.stringBar, slowo2);
+        }
+
+        [TestMethod]
+        public void LoopedConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            container.RegisterType<A>(false);
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                A foo = container.Resolve<A>();
+            });
         }
     }
 }
