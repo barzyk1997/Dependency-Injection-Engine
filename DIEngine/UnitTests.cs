@@ -356,5 +356,15 @@ namespace DIEngine
                 A foo = container.Resolve<A>();
             });
         }
+
+        public void ChainConstructor()
+        {
+            SimpleContainer container = new SimpleContainer();
+            container.RegisterType<ChainBar>(false);
+            ChainBar bar = container.Resolve<ChainBar>();
+            Assert.IsNotNull(bar);
+            Assert.IsNotNull(bar.bar);
+            Assert.IsNotNull(bar.bar.bar);
+        }
     }
 }
