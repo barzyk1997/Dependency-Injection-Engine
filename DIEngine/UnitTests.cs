@@ -356,11 +356,11 @@ namespace DIEngine
             StringBar strBar = new StringBar(slowo2);
             container.RegisterInstance(slowo);
             container.RegisterInstance(strBar);
-            container.RegisterType<MultiStringBar>(false);
-            MultiStringBar bar = container.Resolve<MultiStringBar>();
+            container.RegisterType<MultiStringBar1>(false);
+            MultiStringBar1 bar = container.Resolve<MultiStringBar1>();
             Assert.IsNotNull(bar);
-            Assert.IsNotNull(bar.str);
-            Assert.AreEqual(bar.str, slowo);
+            Assert.IsNotNull(bar.string1);
+            Assert.AreEqual(bar.string1, slowo);
             Assert.IsNotNull(bar.stringBar);
             Assert.AreEqual(bar.stringBar.str, slowo);
         }

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
 
 namespace DIEngine
 {
@@ -24,7 +27,7 @@ namespace DIEngine
     #region MAPPINGS
     public interface Mapping
     {
-        public object GetInstance();
+        public object GetInstance(SimpleContainer container);
     }
 
     public class TypeMapping : Mapping
@@ -36,9 +39,9 @@ namespace DIEngine
             this.t = t;
         }
 
-        public object GetInstance()
+        public object GetInstance(SimpleContainer container)
         {
-            return Activator.CreateInstance(t);
+            return container.CreateInstance(t);
         }
     }
 
@@ -51,7 +54,7 @@ namespace DIEngine
             _instance = Instance;
         }
 
-        public object GetInstance()
+        public object GetInstance(SimpleContainer container)
         {
             return _instance;
         }
@@ -62,12 +65,13 @@ namespace DIEngine
     public class SimpleContainer
     {
         private Dictionary<Type, Mapping> _mappings = new Dictionary<Type, Mapping>();
+        private HashSet<Type> _busy = new HashSet<Type>();
 
         public void RegisterType<T>(bool Singleton) where T : class
         {
             if (Singleton)
             {
-                _mappings[typeof(T)] = new InstanceMapping(Activator.CreateInstance(typeof(T)));
+                _mappings[typeof(T)] = new InstanceMapping(CreateInstance(typeof(T)));
             }
             else
             {
@@ -79,7 +83,7 @@ namespace DIEngine
         {
             if (Singleton)
             {
-                _mappings[typeof(From)] = new InstanceMapping(Activator.CreateInstance(typeof(To)));
+                _mappings[typeof(From)] = new InstanceMapping(CreateInstance(typeof(To)));
             }
             else
             {
@@ -95,18 +99,78 @@ namespace DIEngine
 
         public T Resolve<T>()
         {
-            Type returningType = typeof(T);
+            return (T)Resolve(typeof(T));
+        }
 
-            if (_mappings.ContainsKey(returningType))
+        public object Resolve(Type t)
+        {
+            _busy.Add(t);
+            object instance;
+            if (_mappings.ContainsKey(t))
             {
-                return (T)_mappings[returningType].GetInstance();
+                instance = _mappings[t].GetInstance(this);
+            }
+            else
+            {
+                if (t.IsAbstract || t.IsInterface)
+                {
+                    throw new MissingTypeException(t, "Nie zarejestrowano typu konkretnego dla typu: " + t.ToString());
+                }
+                instance = CreateInstance(t);
+            }
+            _busy.Remove(t);
+            return instance;
+        }
+
+        public T CreateInstance<T>()
+        {
+            return (T)CreateInstance(typeof(T));
+        }
+
+        public object CreateInstance(Type t)
+        {
+            var constructors = t.GetConstructors();
+
+            var maxParams = constructors.Max((constructor) => constructor.GetParameters().Length);
+            var candidates = constructors.Where((constructor) => constructor.GetParameters().Length == maxParams);
+
+            foreach(var c in constructors)
+            {
+                var attrs = c.GetCustomAttributes(false);
+                if(attrs.Length > 0 && attrs.Contains(new DependencyConstructor()))
+                {
+                    candidates = new ConstructorInfo[] { c };
+                    break;
+                }
             }
 
-            if (returningType.IsAbstract || returningType.IsInterface)
+            foreach (var candidate in candidates)
             {
-                throw new MissingTypeException(returningType, "Nie zarejestrowano typu konkretnego dla typu: " + returningType.ToString());
+                try
+                {
+                    var q = candidate.GetParameters();
+                    object[] parameters = candidate.GetParameters().Select((param) =>
+                    {
+                        if(_busy.Contains(param.ParameterType))
+                        {
+                            throw new Exception();
+                        }
+                        return Resolve(param.ParameterType);
+                    }).ToArray();
+
+                    if (parameters.Count() == 0)
+                    {
+                        return Activator.CreateInstance(t);
+                    }
+                    else
+                    {
+                        return Activator.CreateInstance(t, args: parameters);
+                    }
+                }
+                catch (Exception _) { }
             }
-            return (T)Activator.CreateInstance(returningType);
+
+            throw new DependencyResolvingException();
         }
     }
     #endregion
