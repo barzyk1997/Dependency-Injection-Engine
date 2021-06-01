@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace DIEngine
 {
+    #region EXCEPTIONS
     public class MissingTypeException : Exception
     {
         public Type missingType;
@@ -13,48 +14,94 @@ namespace DIEngine
         }
     }
 
-    public class DependencyResolvingException : Exception
-    {
+    public class DependencyResolvingException : Exception { }
+    #endregion
 
+    #region ATTRIBUTES
+    public class DependencyConstructor : Attribute { }
+    #endregion
+
+    #region MAPPINGS
+    public interface Mapping
+    {
+        public object GetInstance();
     }
-    
+
+    public class TypeMapping : Mapping
+    {
+        private Type t;
+
+        public TypeMapping(Type t)
+        {
+            this.t = t;
+        }
+
+        public object GetInstance()
+        {
+            return Activator.CreateInstance(t);
+        }
+    }
+
+    public class InstanceMapping : Mapping
+    {
+        private object _instance;
+
+        public InstanceMapping(object Instance)
+        {
+            _instance = Instance;
+        }
+
+        public object GetInstance()
+        {
+            return _instance;
+        }
+    }
+    #endregion
+
+    #region IoC IMPLEMENTATION
     public class SimpleContainer
     {
-        private Dictionary<Type, Type> _mappings = new Dictionary<Type, Type>();
-        private Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
+        private Dictionary<Type, Mapping> _mappings = new Dictionary<Type, Mapping>();
+
         public void RegisterType<T>(bool Singleton) where T : class, new()
         {
             if (Singleton)
             {
-                _singletons[typeof(T)] = Activator.CreateInstance(typeof(T));
+                _mappings[typeof(T)] = new InstanceMapping(Activator.CreateInstance(typeof(T)));
+            }
+            else
+            {
+                _mappings[typeof(T)] = new TypeMapping(typeof(T));
             }
         }
 
         public void RegisterType<From, To>(bool Singleton) where To : From
         {
-            _mappings[typeof(From)] = typeof(To);
             if (Singleton)
             {
-                _singletons[typeof(From)] = Activator.CreateInstance(typeof(To));
+                _mappings[typeof(From)] = new InstanceMapping(Activator.CreateInstance(typeof(To)));
+            }
+            else
+            {
+                _mappings[typeof(From)] = new TypeMapping(typeof(To));
+
             }
         }
 
         public void RegisterInstance<T>(T instance)
         {
-            throw new NotImplementedException();
+            _mappings[typeof(T)] = new InstanceMapping(instance);
         }
 
         public T Resolve<T>()
         {
             Type returningType = typeof(T);
-            if(_singletons.ContainsKey(returningType))
-            {
-                return (T)_singletons[returningType];
-            }
+
             if (_mappings.ContainsKey(returningType))
             {
-                returningType = _mappings[returningType];
+                return (T)_mappings[returningType].GetInstance();
             }
+
             if (returningType.IsAbstract || returningType.IsInterface)
             {
                 throw new MissingTypeException(returningType, "Nie zarejestrowano typu konkretnego dla typu: " + returningType.ToString());
@@ -62,4 +109,5 @@ namespace DIEngine
             return (T)Activator.CreateInstance(returningType);
         }
     }
+    #endregion
 }
