@@ -107,7 +107,10 @@ namespace DIEngine
     {
         public ConstructorBar bar {get; set;}
 
-        public ChainBar()
+        public ChainBar(ConstructorBar bar)
+        {
+            this.bar = bar;
+        }
     }
 
     public class A
