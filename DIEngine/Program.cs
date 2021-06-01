@@ -12,6 +12,11 @@ namespace DIEngine
             this.missingType = missingType;
         }
     }
+
+    public class DependencyResolvingException : Exception
+    {
+
+    }
     
     public class SimpleContainer
     {
@@ -32,6 +37,11 @@ namespace DIEngine
             {
                 _singletons[typeof(From)] = Activator.CreateInstance(typeof(To));
             }
+        }
+
+        public void RegisterInstance<T>(T instance)
+        {
+            throw new NotImplementedException();
         }
 
         public T Resolve<T>()
