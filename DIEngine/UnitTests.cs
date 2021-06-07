@@ -123,7 +123,81 @@ namespace DIEngine
         }
     }
 
+    public class BuildUpObject
+    {
+        public Bar bar1;
+        public Bar bar2;
+        public Bar bar3;
+        public ConstructorBar bar4;
 
+        [DependencyProperty]
+        public Foo foo { get; set; }
+
+        public OtherFoo foo2 { get; set; }
+
+        public BuildUpObject(Bar bar3, ConstructorBar bar4)
+        {
+            this.bar3 = bar3;
+            this.bar4 = bar4;
+        }
+
+
+        [DependencyMethod]
+        public void setBar1(Bar bar1)
+        {
+            this.bar1 = bar1;
+        }
+        
+        public void setBar2(Bar bar2)
+        {
+            this.bar2 = bar2;
+        }
+    }
+
+    public class NestedBuildUpObject
+    {
+        [DependencyProperty]
+        public BuildUpObject obj1 { get; set; }
+
+        public BuildUpObject obj2;
+
+        public BuildUpObject obj3;
+
+        public NestedBuildUpObject(BuildUpObject obj2)
+        {
+            this.obj2 = obj2;
+        }
+
+        [DependencyMethod]
+        public void SetObj3(BuildUpObject obj3)
+        {
+            this.obj3 = obj3;
+        }
+    }
+
+    public class LoopedBuildUpObject1
+    {
+        [DependencyProperty]
+        public LoopedBuildUpObject1 obj { get; set; }
+    }
+
+    public class LoopedBuildUpObject2
+    {
+        [DependencyMethod]
+        public void SetObj(LoopedBuildUpObject2 obj) { }
+    }
+
+    public class CyclicBuildUpObject1
+    {
+        [DependencyProperty]
+        public CyclicBuildUpObject1 obj { get; set; }
+    }
+
+    public class CyclicBuildUpObject2
+    {
+        [DependencyMethod]
+        public void SetObj(CyclicBuildUpObject1 obj) { }
+    }
 
     [TestClass]
     public class UnitTests
@@ -376,6 +450,7 @@ namespace DIEngine
             });
         }
 
+        [TestMethod]
         public void ChainConstructor()
         {
             SimpleContainer container = new SimpleContainer();
@@ -384,6 +459,105 @@ namespace DIEngine
             Assert.IsNotNull(bar);
             Assert.IsNotNull(bar.bar);
             Assert.IsNotNull(bar.bar.bar);
+        }
+
+        [TestMethod]
+        public void SimpleBuildUp()
+        {
+            Bar bar3 = new Bar();
+            ConstructorBar bar4 = new ConstructorBar(bar3);
+            BuildUpObject obj = new BuildUpObject(bar3, bar4);
+            SimpleContainer container = new SimpleContainer();
+
+            container.BuildUp(obj);
+
+            Assert.IsNull(obj.foo2);
+            Assert.IsNull(obj.bar2);
+
+            Assert.IsNotNull(obj.foo);
+            Assert.IsNotNull(obj.bar1);
+        }
+
+        [TestMethod]
+        public void ConstructAndBuild()
+        {
+            SimpleContainer container = new SimpleContainer();
+            BuildUpObject obj = container.Resolve<BuildUpObject>();
+            
+            Assert.IsNull(obj.foo2);
+            Assert.IsNull(obj.bar2);
+
+            Assert.IsNotNull(obj.foo);
+            Assert.IsNotNull(obj.bar1);
+        }
+
+        [TestMethod]
+        public void NestedBuildInConstruction()
+        {
+            SimpleContainer container = new SimpleContainer();
+            NestedBuildUpObject obj = container.Resolve<NestedBuildUpObject>();
+
+            Assert.IsNotNull(obj.obj1);
+            Assert.IsNotNull(obj.obj2);
+            Assert.IsNotNull(obj.obj3);
+        }
+
+        [TestMethod]
+        public void LoopedBuild()
+        {
+            SimpleContainer container = new SimpleContainer();
+            LoopedBuildUpObject1 looped1 = new LoopedBuildUpObject1();
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.BuildUp(looped1);
+            });
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.Resolve<LoopedBuildUpObject1>();
+            });
+
+            LoopedBuildUpObject2 looped2 = new LoopedBuildUpObject2();
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.BuildUp(looped2);
+            });
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.Resolve<LoopedBuildUpObject2>();
+            });
+        }
+
+        [TestMethod]
+        public void CyclicBuild()
+        {
+            SimpleContainer container = new SimpleContainer();
+            CyclicBuildUpObject1 cyclic1 = new CyclicBuildUpObject1();
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.BuildUp(cyclic1);
+            });
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.Resolve<CyclicBuildUpObject1>();
+            });
+
+            CyclicBuildUpObject2 cyclic2 = new CyclicBuildUpObject2();
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.BuildUp(cyclic2);
+            });
+
+            Assert.ThrowsException<DependencyResolvingException>(() =>
+            {
+                container.Resolve<CyclicBuildUpObject2>();
+            });
         }
     }
 }

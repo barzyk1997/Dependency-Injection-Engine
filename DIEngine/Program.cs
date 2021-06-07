@@ -22,6 +22,10 @@ namespace DIEngine
 
     #region ATTRIBUTES
     public class DependencyConstructor : Attribute { }
+
+    public class DependencyProperty : Attribute { }
+
+    public class DependencyMethod : Attribute { }
     #endregion
 
     #region MAPPINGS
@@ -130,14 +134,12 @@ namespace DIEngine
         public object CreateInstance(Type t)
         {
             var constructors = t.GetConstructors();
-
             var maxParams = constructors.Max((constructor) => constructor.GetParameters().Length);
             var candidates = constructors.Where((constructor) => constructor.GetParameters().Length == maxParams);
 
             foreach(var c in constructors)
             {
-                var attrs = c.GetCustomAttributes(false);
-                if(attrs.Length > 0 && attrs.Contains(new DependencyConstructor()))
+                if(c.GetCustomAttribute<DependencyConstructor>() != null)
                 {
                     candidates = new ConstructorInfo[] { c };
                     break;
@@ -148,7 +150,6 @@ namespace DIEngine
             {
                 try
                 {
-                    var q = candidate.GetParameters();
                     object[] parameters = candidate.GetParameters().Select((param) =>
                     {
                         if(_busy.Contains(param.ParameterType))
@@ -158,19 +159,53 @@ namespace DIEngine
                         return Resolve(param.ParameterType);
                     }).ToArray();
 
-                    if (parameters.Count() == 0)
-                    {
-                        return Activator.CreateInstance(t);
-                    }
-                    else
-                    {
-                        return Activator.CreateInstance(t, args: parameters);
-                    }
+                    object instance = Activator.CreateInstance(t, parameters);
+                    BuildUp(t, instance);
+                    return instance;
                 }
                 catch (Exception _) { }
             }
 
             throw new DependencyResolvingException();
+        }
+
+        public void BuildUp<T>(T instance)
+        {
+            BuildUp(typeof(T), instance);
+        }
+
+        public void BuildUp(Type t, object instance)
+        {
+            var properties = t.GetProperties();
+            foreach(var prop in properties)
+            {
+                if(prop.GetCustomAttribute<DependencyProperty>() != null)
+                {
+                    if(_busy.Contains(prop.PropertyType))
+                    {
+                        throw new DependencyResolvingException();
+                    }
+                    prop.SetValue(instance, Resolve(prop.PropertyType));
+                }
+            }
+
+            var methods = t.GetMethods();
+            foreach(var method in methods)
+            {
+                if(method.GetCustomAttribute<DependencyMethod>() != null)
+                {
+                    object[] parameters = method.GetParameters().Select((param) =>
+                    {
+                        if (_busy.Contains(param.ParameterType))
+                        {
+                            throw new DependencyResolvingException();
+                        }
+                        return Resolve(param.ParameterType);
+                    }).ToArray();
+
+                    method.Invoke(instance, parameters);
+                }
+            }
         }
     }
     #endregion
