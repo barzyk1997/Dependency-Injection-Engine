@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DIEngine
 {
-
+    #region ClassesForTesting
     public interface IFoo
     {
 
@@ -198,10 +198,11 @@ namespace DIEngine
         [DependencyMethod]
         public void SetObj(CyclicBuildUpObject1 obj) { }
     }
-
+    #endregion
     [TestClass]
     public class UnitTests
     {
+        #region ContainerTests
         [TestMethod]
         public void SimpleConcrete()
         {
@@ -344,7 +345,8 @@ namespace DIEngine
 
             Assert.AreEqual(foo1, foo2);
         }
-
+        #endregion
+        #region ConstructorTests
         [TestMethod]
         public void NonEmptyConstructor()
         {
@@ -460,7 +462,8 @@ namespace DIEngine
             Assert.IsNotNull(bar.bar);
             Assert.IsNotNull(bar.bar.bar);
         }
-
+        #endregion
+        #region BuildTests
         [TestMethod]
         public void SimpleBuildUp()
         {
@@ -559,5 +562,22 @@ namespace DIEngine
                 container.Resolve<CyclicBuildUpObject2>();
             });
         }
+        #endregion
+        #region ServiceLocatorTests
+        [TestMethod]
+        public void AlwaysTheSameServiceLocatorTest()
+        {
+            SimpleContainer c = new SimpleContainer();
+            ContainerProviderDelegate containerProvider = () => c;
+            ServiceLocator.SetContainerProvider(containerProvider);
+
+            c.RegisterType<Foo>(true);
+
+            Assert.IsNotNull(ServiceLocator.Current.GetInstance<Foo>());
+            Assert.AreEqual(ServiceLocator.Current.GetInstance<Foo>(), c.Resolve<Foo>());
+        }
+
+        []
+        #endregion
     }
 }
