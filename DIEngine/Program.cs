@@ -117,9 +117,8 @@ namespace DIEngine
             else
             {
                 if (t.IsAbstract || t.IsInterface)
-                {
                     throw new MissingTypeException(t, "Nie zarejestrowano typu konkretnego dla typu: " + t.ToString());
-                }
+                
                 instance = CreateInstance(t);
             }
             _busy.Remove(t);
@@ -153,9 +152,8 @@ namespace DIEngine
                     object[] parameters = candidate.GetParameters().Select((param) =>
                     {
                         if(_busy.Contains(param.ParameterType))
-                        {
                             throw new Exception();
-                        }
+
                         return Resolve(param.ParameterType);
                     }).ToArray();
 
@@ -176,30 +174,26 @@ namespace DIEngine
 
         public void BuildUp(Type t, object instance)
         {
-            var properties = t.GetProperties();
-            foreach(var prop in properties)
+            foreach(var prop in t.GetProperties())
             {
                 if(prop.GetCustomAttribute<DependencyProperty>() != null)
                 {
                     if(_busy.Contains(prop.PropertyType))
-                    {
                         throw new DependencyResolvingException();
-                    }
+
                     prop.SetValue(instance, Resolve(prop.PropertyType));
                 }
             }
 
-            var methods = t.GetMethods();
-            foreach(var method in methods)
+            foreach(var method in t.GetMethods())
             {
                 if(method.GetCustomAttribute<DependencyMethod>() != null)
                 {
                     object[] parameters = method.GetParameters().Select((param) =>
                     {
                         if (_busy.Contains(param.ParameterType))
-                        {
                             throw new DependencyResolvingException();
-                        }
+
                         return Resolve(param.ParameterType);
                     }).ToArray();
 
