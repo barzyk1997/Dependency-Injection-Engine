@@ -565,7 +565,7 @@ namespace DIEngine
         #endregion
         #region ServiceLocatorTests
         [TestMethod]
-        public void AlwaysTheSameServiceLocatorTest()
+        public void AlwaysTheSameServiceLocatorTest1()
         {
             SimpleContainer c = new SimpleContainer();
             ContainerProviderDelegate containerProvider = () => c;
@@ -577,7 +577,24 @@ namespace DIEngine
             Assert.AreEqual(ServiceLocator.Current.GetInstance<Foo>(), c.Resolve<Foo>());
         }
 
-        []
+        [TestMethod]
+        public void AlwaysTheSameServiceLocatorTest2()
+        {
+            SimpleContainer c = new SimpleContainer();
+            ContainerProviderDelegate containerProvider = () => c;
+            ServiceLocator.SetContainerProvider(containerProvider);
+
+            Assert.AreEqual(ServiceLocator.Current.GetInstance<SimpleContainer>(), c);
+        }
+
+        [TestMethod]
+        public void AlwaysNewServiceLocatorTest()
+        {
+            ContainerProviderDelegate containerProvider = () => new SimpleContainer();
+            ServiceLocator.SetContainerProvider(containerProvider);
+
+            Assert.AreNotEqual(ServiceLocator.Current.GetInstance<SimpleContainer>(), ServiceLocator.Current.GetInstance<SimpleContainer>());
+        }
         #endregion
     }
 }

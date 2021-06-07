@@ -44,6 +44,11 @@ namespace DIEngine
         {
             if (_providerDelegate != null)
             {
+                if(typeof(T) == typeof(SimpleContainer))
+                {
+                    object res = _providerDelegate();
+                    return (T) res;
+                }
                 return _providerDelegate().Resolve<T>();
             }
             else
