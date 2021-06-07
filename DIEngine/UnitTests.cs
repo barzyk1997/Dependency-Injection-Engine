@@ -596,5 +596,18 @@ namespace DIEngine
             Assert.AreNotEqual(ServiceLocator.Current.GetInstance<SimpleContainer>(), ServiceLocator.Current.GetInstance<SimpleContainer>());
         }
         #endregion
+        #region LocalFactoryTests
+        [TestMethod]
+        public void LocalFactoryUsage()
+        {
+            var container = new SimpleContainer();
+            container.RegisterType<IFoo, Foo>(true);
+            LocalFactory<IFoo> factory = new LocalFactory<IFoo>();
+            factory.SetProvider(() => container.Resolve<IFoo>());
+
+            Assert.AreEqual(factory.CreateService(), factory.CreateService());
+            Assert.AreEqual(container.Resolve<IFoo>(), factory.CreateService());
+        }
+        #endregion
     }
 }
